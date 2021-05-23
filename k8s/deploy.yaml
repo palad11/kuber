@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front
+  labels:
+    app: front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: front
+  template:
+    metadata:
+      labels:
+        pod: front
+    spec:
+      containers:
+        - name: front
+          image: paladen/front
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 11000
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back
+  labels:
+    app: back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: back
+  template:
+    metadata:
+      labels:
+        pod: back
+    spec:
+      containers:
+        - name: back
+          image: paladen/back
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: redis
+  template:
+    metadata:
+      labels:
+        pod: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:alpine
+          ports:
+            - containerPort: 6379

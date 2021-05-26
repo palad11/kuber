@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front
+  labels:
+    app: front
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.app.front.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      pod: front
+  template:
+    metadata:
+      labels:
+        pod: front
+    spec:
+      containers:
+        - name: front
+          image: {{ .Values.app.front.image }}
+          imagePullPolicy: {{ .Values.app.front.pullPolicy }}
+          ports:
+            - containerPort: 11000
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back
+  labels:
+    app: back
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.app.back.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      pod: back
+  template:
+    metadata:
+      labels:
+        pod: back
+    spec:
+      containers:
+        - name: back
+          image: {{ .Values.app.back.image }}
+          imagePullPolicy: {{ .Values.app.back.pullPolicy }}
+          ports:
+            - containerPort: 80
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.app.redis.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      pod: redis
+  template:
+    metadata:
+      labels:
+        pod: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
